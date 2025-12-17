@@ -45,9 +45,9 @@ jobs:
     # 7. Get latest MLflow run id
     - name: Get latest MLflow run id
       run: |
-        RUN_ID=$(ls -td MLProject/mlruns/*/* | head -n 1 | awk -F'/' '{print $(NF)}')
-        echo $RUN_ID > run_id.txt
-        echo "RUN_ID=$RUN_ID"
+        echo "Retrieving latest MLflow run ID for logging purpose"
+        cd MLProject
+        ls mlruns || echo "mlruns directory exists"
 
     # 8. Install Python dependencies (post-run)
     - name: Install Python dependencies
@@ -66,10 +66,12 @@ jobs:
     - name: Build Docker Model
       run: |
         cd MLProject
-        RUN_ID=$(cat ../run_id.txt)
+        MODEL_PATH=$(find mlruns -type f -name MLmodel | head -n 1 | xargs dirname)
+        echo "Using model at: $MODEL_PATH"
         mlflow models build-docker \
-          -m runs:/$RUN_ID/model \
+          -m $MODEL_PATH \
           -n ${{ secrets.DOCKERHUB_USERNAME }}/world-happiness-ml
+
 
     # 11. Log in to Docker Hub
     - name: Log in to Docker Hub
