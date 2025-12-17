@@ -1,9 +1,54 @@
-- name: Run MLflow Project
-  run: |
-    cd MLProject
-    mlflow run .
-- name: Build Docker Model
-  run: |
-    mlflow models build-docker \
-      -m runs:/$(cat run_id.txt)/model \
-      -n harneptune/world-happiness-ml
+name: ML Training CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install mlflow==2.19.0 scikit-learn numpy pandas matplotlib
+
+      - name: Run MLflow Project
+        run: |
+          cd MLProject
+          mlflow run .
+
+      - name: Get latest MLflow run id
+        run: |
+          RUN_ID=$(ls -td mlruns/*/* | head -n 1 | awk -F'/' '{print $3}')
+          echo $RUN_ID > run_id.txt
+          cat run_id.txt
+
+      - name: Build Docker Model (MLflow)
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          RUN_ID=$(cat run_id.txt)
+          mlflow models build-docker \
+            -m runs:/$RUN_ID/model \
+            -n $DOCKERHUB_USERNAME/world-happiness-ml
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/world-happiness-ml
