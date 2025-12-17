@@ -30,7 +30,7 @@ jobs:
 
       - name: Promote model to Production
         run: |
-          mlflow models transition-stage \
+          mlflow models set-stage \
             --model-name "CI World Happiness Training" \
             --version 1 \
             --stage Production
