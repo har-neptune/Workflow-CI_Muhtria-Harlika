@@ -6,10 +6,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 
 def main():
-    # Tracking ke local file (AMAN di CI)
-    mlflow.set_tracking_uri("file:./mlruns")
-    mlflow.set_experiment("CI World Happiness Training")
-
     X_train = np.load("worldhappiness_preprocessing/X_train.npy")
     X_test = np.load("worldhappiness_preprocessing/X_test.npy")
     y_train = np.load("worldhappiness_preprocessing/y_train.npy")
@@ -26,7 +22,7 @@ def main():
     rmse = mean_squared_error(y_test, y_pred) ** 0.5
     r2 = r2_score(y_test, y_pred)
 
-    # Manual logging (tanpa start_run)
+    # LOGGING TANPA START_RUN & SET_EXPERIMENT
     mlflow.log_param("model_type", "RandomForestRegressor")
     mlflow.log_param("n_estimators", 100)
     mlflow.log_metric("rmse", rmse)
