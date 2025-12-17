@@ -26,7 +26,7 @@ jobs:
       - name: Run MLflow Project
         run: |
           cd MLProject
-          mlflow run .
+          mlflow run . --no-conda
 
       - name: Get latest MLflow run id
         run: |
