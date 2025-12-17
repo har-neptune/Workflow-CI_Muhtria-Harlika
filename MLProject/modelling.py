@@ -28,7 +28,10 @@ def main():
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("r2", r2)
 
-    mlflow.sklearn.log_model(model, artifact_path="model")
+    mlflow.sklearn.log_model(
+        model, 
+        artifact_path="model",
+        registered_model_name="CI World Hapiness Training")
 
 
 if __name__ == "__main__":
