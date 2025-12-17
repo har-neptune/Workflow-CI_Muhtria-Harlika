@@ -4,8 +4,10 @@ import mlflow.sklearn
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
-
 def main():
+    # WAJIB AUTLOG
+    mlflow.sklearn.autolog()
+
     X_train = np.load("worldhappiness_preprocessing/X_train.npy")
     X_test = np.load("worldhappiness_preprocessing/X_test.npy")
     y_train = np.load("worldhappiness_preprocessing/y_train.npy")
@@ -22,18 +24,8 @@ def main():
     rmse = mean_squared_error(y_test, y_pred) ** 0.5
     r2 = r2_score(y_test, y_pred)
 
-    # Manual logging (CI-safe)
-    mlflow.log_param("model_type", "RandomForestRegressor")
-    mlflow.log_param("n_estimators", 100)
-    mlflow.log_metric("rmse", rmse)
-    mlflow.log_metric("r2", r2)
-
-    # Log model artifact
-    mlflow.sklearn.log_model(
-        model,
-        artifact_path="model"
-    )
-
+    print("RMSE:", rmse)
+    print("R2:", r2)
 
 if __name__ == "__main__":
     main()

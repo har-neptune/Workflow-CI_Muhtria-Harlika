@@ -1,6 +1,4 @@
-name: world-happiness-training
-
-python_env: python_env.yaml
+name: world-happiness-ml
 
 entry_points:
   main:

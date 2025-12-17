@@ -1,14 +1,10 @@
+name: world-happiness-env
 channels:
-- conda-forge
+  - defaults
 dependencies:
-- python=3.12.7
-- pip<=25.3
-- pip:
-  - mlflow==3.7.0
-  - cloudpickle==3.1.2
-  - numpy==2.1.2
-  - pandas==2.2.3
-  - pyarrow==22.0.0
-  - scikit-learn==1.8.0
-  - scipy==1.16.3
-name: mlflow-env
+  - python=3.12
+  - pip
+  - pip:
+      - mlflow
+      - scikit-learn
+      - numpy
