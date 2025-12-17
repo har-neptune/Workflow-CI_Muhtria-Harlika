@@ -22,16 +22,17 @@ def main():
     rmse = mean_squared_error(y_test, y_pred) ** 0.5
     r2 = r2_score(y_test, y_pred)
 
-    # LOGGING TANPA START_RUN & SET_EXPERIMENT
+    # Manual logging (CI-safe)
     mlflow.log_param("model_type", "RandomForestRegressor")
     mlflow.log_param("n_estimators", 100)
     mlflow.log_metric("rmse", rmse)
     mlflow.log_metric("r2", r2)
 
+    # Log model artifact
     mlflow.sklearn.log_model(
-        model, 
-        artifact_path="model",
-        registered_model_name="CI World Hapiness Training")
+        model,
+        artifact_path="model"
+    )
 
 
 if __name__ == "__main__":
