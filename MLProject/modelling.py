@@ -6,42 +6,29 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 
 def main():
-    # Load preprocessed data
+    mlflow.set_tracking_uri("file:./mlruns")
+    mlflow.set_experiment("CI World Happiness Training")
+
     X_train = np.load("worldhappiness_preprocessing/X_train.npy")
     X_test = np.load("worldhappiness_preprocessing/X_test.npy")
     y_train = np.load("worldhappiness_preprocessing/y_train.npy")
     y_test = np.load("worldhappiness_preprocessing/y_test.npy")
 
-    # MLflow setup
-    mlflow.set_tracking_uri("http://127.0.0.1:5000")
-    mlflow.set_experiment("World Happiness Baseline Model")
-
-    with mlflow.start_run(run_name="rf_baseline"):
-        # Train model (baseline)
-        model = RandomForestRegressor(
-            n_estimators=100,
-            random_state=42
-        )
+    with mlflow.start_run(run_name="ci_baseline"):
+        model = RandomForestRegressor(n_estimators=100, random_state=42)
         model.fit(X_train, y_train)
 
-        # Prediction & metrics
         y_pred = model.predict(X_test)
 
         rmse = mean_squared_error(y_test, y_pred) ** 0.5
         r2 = r2_score(y_test, y_pred)
 
-        # Manual logging
         mlflow.log_param("model_type", "RandomForestRegressor")
         mlflow.log_param("n_estimators", 100)
-
         mlflow.log_metric("rmse", rmse)
         mlflow.log_metric("r2", r2)
 
-        # Log model
-        mlflow.sklearn.log_model(
-            model,
-            artifact_path="model"
-        )
+        mlflow.sklearn.log_model(model, artifact_path="model")
 
 
 if __name__ == "__main__":
